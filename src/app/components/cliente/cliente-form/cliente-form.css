@@ -1,0 +1,19 @@
+.input-pequeno {
+  width: 120px;
+}
+
+.input-medio {
+  width: 250px;
+}
+
+.input-grande {
+  width: 100%; /* ocupa toda a linha */
+}
+
+button {
+  margin: 0px 0px 0px 2rem;
+}
+
+.mat-mdc-card-header {
+  margin: 1rem 0rem 1rem 2rem;
+}
