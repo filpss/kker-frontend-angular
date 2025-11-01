@@ -1,0 +1,90 @@
+<div class="home-container">
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>people</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h2>Clientes</h2>
+          <p class="stat-number">0</p>
+          <p class="stat-label">Total cadastrados</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>shopping_cart</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h2>Vendas</h2>
+          <p class="stat-number">0</p>
+          <p class="stat-label">Este mês</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>payment</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h2>Pagamentos</h2>
+          <p class="stat-number">R$ 0,00</p>
+          <p class="stat-label">Recebidos hoje</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon">
+          <mat-icon>receipt</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h2>Cobranças</h2>
+          <p class="stat-number">0</p>
+          <p class="stat-label">Pendentes</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="section-card">
+    <mat-card-header>
+      <mat-card-title>Ações Rápidas</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="actions-grid">
+        <button mat-raised-button color="primary" routerLink="/clientes">
+          <mat-icon>person_add</mat-icon>
+          Novo Cliente
+        </button>
+        <button mat-raised-button color="primary" routerLink="/vendas">
+          <mat-icon>add_shopping_cart</mat-icon>
+          Nova Venda
+        </button>
+        <button mat-raised-button color="primary" routerLink="/pagamentos">
+          <mat-icon>account_balance_wallet</mat-icon>
+          Registrar Pagamento
+        </button>
+        <button mat-raised-button color="primary" routerLink="/cobrancas">
+          <mat-icon>receipt_long</mat-icon>
+          Visualizar Cobrança Diária
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section-card">
+    <mat-card-header>
+      <mat-card-title>Últimos Registros</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p class="empty-state">Nenhum registro recente</p>
+    </mat-card-content>
+  </mat-card>
+</div>
