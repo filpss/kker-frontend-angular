@@ -12,23 +12,25 @@
           <mat-grid-tile>
             <mat-form-field class="input-medio">
               <mat-label>Nome</mat-label>
-              <input matInput required="true" id="nome" formControlName="nome" />
+              <input matInput required="true" id="nome" formControlName="nome"/>
+              @if(nome?.hasError('required')){
+                <mat-error>O campo nome é obrigatório</mat-error>
+              }
+              @if(nome?.hasError('pattern')){
+                <mat-error>Espaço vazio</mat-error>
+              }
             </mat-form-field>
           </mat-grid-tile>
 
 
           <mat-grid-tile>
             <mat-form-field class="input-medio">
-              <!-- <mat-label>Ativo</mat-label>
-              <input matInput id="isAtivo" formControlName="isAtivo" /> -->
-
               <mat-label>Ativo</mat-label>
-              <mat-select required="true" formControlName="isAtivo">
+              <mat-select id="isAtivo" formControlName="isAtivo">
                 @for (statusCliente of statusClienteList; track statusCliente) {
                   <mat-option [value]="statusCliente">{{statusCliente}}</mat-option>
                 }
               </mat-select>
-
             </mat-form-field>
           </mat-grid-tile>
 
@@ -36,14 +38,23 @@
             <mat-form-field class="input-medio">
               <mat-label>Telefone</mat-label>
               <mat-icon matSuffix>phone</mat-icon>
-              <input matInput required="true" id="telefone" formControlName="telefone" />
+              <input matInput required="true" id="telefone" formControlName="telefone" mask="(00) 00000-0000"/>
+              @if(telefone?.hasError('required') && telefone?.touched){
+                <mat-error>O campo telefone é obrigatório</mat-error>
+              } @if(telefone?.hasError("minlength")) {
+                <mat-error>Insira um número de telefone válido</mat-error>
+              }
+
             </mat-form-field>
           </mat-grid-tile>
 
           <mat-grid-tile>
-            <mat-form-field>
+            <mat-form-field class="input-medio">
               <mat-label>Data de cobrança</mat-label>
-              <input matInput [matDatepicker]="picker" id="dataCobranca" formControlName="dataCobranca" />
+              <input matInput [matDatepicker]="picker" required="true" id="dataCobranca" formControlName="dataCobranca"/>
+              @if(dataCobranca?.invalid){
+                <mat-error>O campo data de cobrança é obrigatório</mat-error>
+              }
               <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
@@ -54,12 +65,10 @@
         <mat-card-actions>
           <button matButton>cancelar</button>
           <button matButton>limpar</button>
-          <button matButton type="submit">confirmar</button>
+          <button matButton type="submit" [disabled]="!clienteForm.valid">confirmar</button>
         </mat-card-actions>
+
       </form>
 
     </mat-card-content>
-
-
-
 </mat-card>
