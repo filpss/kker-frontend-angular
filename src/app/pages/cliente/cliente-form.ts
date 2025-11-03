@@ -10,7 +10,6 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { NgxMaskDirective } from 'ngx-mask';
 
 
 import { StatusCliente } from './../../shared/enums/StatusCliente';
@@ -32,15 +31,12 @@ import { trimmedRequiredValidator } from '../../shared/validators/trimmedRequire
               MatDatepickerModule,
               MatNativeDateModule,
               MatSelectModule,
-              NgxMaskDirective,
-              DatePipe
             ],
   templateUrl: './cliente-form.html',
   styleUrl: './cliente-form.css',
 })
 export class ClienteForm {
 
-  protected readonly data = new Date();
   statusCliente = StatusCliente;
   statusClienteList = Object.values(this.statusCliente);
 
