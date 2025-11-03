@@ -73,4 +73,10 @@ export class ClienteForm {
   onSubmit(){
     console.warn(this.clienteForm.value);
   }
+
+  onClearForm(){
+    this.clienteForm.reset({
+      isAtivo: StatusCliente.ATIVO
+    });
+  }
 }
