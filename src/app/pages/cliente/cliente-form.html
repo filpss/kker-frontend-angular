@@ -1,0 +1,74 @@
+<mat-card appearance="outlined">
+    <mat-card-header>
+        <mat-card-title>
+          Cadastro de cliente
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="clienteForm" (ngSubmit)="onSubmit()">
+        <mat-grid-list cols="4" rowHeight="100px" gutterSize="8px">
+
+          <mat-grid-tile>
+            <mat-form-field class="input-medio">
+              <mat-label>Nome</mat-label>
+              <input matInput required="true" id="nome" formControlName="nome"/>
+              @if(nome?.hasError('required')){
+                <mat-error>O campo nome é obrigatório</mat-error>
+              }
+              @if(nome?.hasError('pattern')){
+                <mat-error>Espaço vazio</mat-error>
+              }
+            </mat-form-field>
+          </mat-grid-tile>
+
+
+          <mat-grid-tile>
+            <mat-form-field class="input-medio">
+              <mat-label>Ativo</mat-label>
+              <mat-select id="isAtivo" formControlName="isAtivo">
+                @for (statusCliente of statusClienteList; track statusCliente) {
+                  <mat-option [value]="statusCliente">{{statusCliente}}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </mat-grid-tile>
+
+          <mat-grid-tile>
+            <mat-form-field class="input-medio">
+              <mat-label>Telefone</mat-label>
+              <mat-icon matSuffix>phone</mat-icon>
+              <input matInput required="true" id="telefone" formControlName="telefone" mask="(00) 00000-0000"/>
+              @if(telefone?.hasError('required') && telefone?.touched){
+                <mat-error>O campo telefone é obrigatório</mat-error>
+              } @if(telefone?.hasError("minlength")) {
+                <mat-error>Insira um número de telefone válido</mat-error>
+              }
+
+            </mat-form-field>
+          </mat-grid-tile>
+
+          <mat-grid-tile>
+            <mat-form-field class="input-medio">
+              <mat-label>Data de cobrança</mat-label>
+              <input matInput [matDatepicker]="picker" required="true" id="dataCobranca" formControlName="dataCobranca"/>
+              @if(dataCobranca?.invalid){
+                <mat-error>O campo data de cobrança é obrigatório</mat-error>
+              }
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </mat-grid-tile>
+
+        </mat-grid-list>
+
+        <mat-card-actions>
+          <button matButton>cancelar</button>
+          <button matButton>limpar</button>
+          <button matButton type="submit" [disabled]="!clienteForm.valid">confirmar</button>
+        </mat-card-actions>
+
+      </form>
+
+    </mat-card-content>
+</mat-card>

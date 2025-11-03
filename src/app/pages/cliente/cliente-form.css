@@ -4,6 +4,7 @@
 
 .input-medio {
   width: 250px;
+  margin-bottom: 10px;
 }
 
 .input-grande {
@@ -17,3 +18,5 @@ button {
 .mat-mdc-card-header {
   margin: 1rem 0rem 1rem 2rem;
 }
+
+
