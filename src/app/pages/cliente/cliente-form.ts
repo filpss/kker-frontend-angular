@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -32,13 +32,15 @@ import { trimmedRequiredValidator } from '../../shared/validators/trimmedRequire
               MatDatepickerModule,
               MatNativeDateModule,
               MatSelectModule,
-              NgxMaskDirective
+              NgxMaskDirective,
+              DatePipe
             ],
   templateUrl: './cliente-form.html',
   styleUrl: './cliente-form.css',
 })
 export class ClienteForm {
 
+  protected readonly data = new Date();
   statusCliente = StatusCliente;
   statusClienteList = Object.values(this.statusCliente);
 
