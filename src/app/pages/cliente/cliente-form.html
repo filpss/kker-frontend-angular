@@ -64,10 +64,9 @@
 
         <mat-card-actions>
           <button matButton>cancelar</button>
-          <button matButton (click)="onClearForm()">limpar</button>
+          <button matButton type="button" (click)="onClearForm()">limpar</button>
           <button matButton type="submit" [disabled]="!clienteForm.valid">confirmar</button>
         </mat-card-actions>
-
       </form>
 
     </mat-card-content>

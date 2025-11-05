@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
+import { provideHttpClient } from '@angular/common/http';
 
 import ptLocale from '@angular/common/locales/pt';
 import { DATE_PIPE_DEFAULT_OPTIONS, registerLocaleData } from '@angular/common';
@@ -32,6 +33,7 @@ export const appConfig: ApplicationConfig = {
     provideEnvironmentNgxMask(),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes)
+    provideRouter(routes),
+    provideHttpClient()
   ]
 };
