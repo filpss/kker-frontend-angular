@@ -51,7 +51,7 @@
           <mat-grid-tile>
             <mat-form-field class="input-medio">
               <mat-label>Data de cobrança</mat-label>
-              <input matInput [matDatepicker]="picker" required="true" id="dataCobranca" formControlName="dataCobranca"/>
+              <input matInput [matDatepicker]="picker" required="true" id="dataCobranca" formControlName="dataCobranca" readonly/>
               @if(dataCobranca?.invalid){
                 <mat-error>O campo data de cobrança é obrigatório</mat-error>
               }

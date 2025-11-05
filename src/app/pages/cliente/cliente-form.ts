@@ -1,6 +1,6 @@
 import { Cliente } from './../../model/Cliente.entity';
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,7 +12,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { NgxMaskDirective } from 'ngx-mask';
-
 
 import { StatusCliente } from './../../shared/enums/StatusCliente';
 import { trimmedRequiredValidator } from '../../shared/validators/trimmedRequiredValidator';
