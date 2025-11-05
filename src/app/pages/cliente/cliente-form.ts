@@ -16,6 +16,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 
 import { StatusCliente } from './../../shared/enums/StatusCliente';
 import { trimmedRequiredValidator } from '../../shared/validators/trimmedRequiredValidator';
+import { ClienteService } from '../../service/cliente-service';
 
 
 
@@ -42,6 +43,8 @@ export class ClienteForm {
 
   statusCliente = StatusCliente;
   statusClienteList = Object.values(this.statusCliente);
+
+  private clienteService = inject(ClienteService);
 
   private FormBuilder = inject(FormBuilder);
 
@@ -72,7 +75,10 @@ export class ClienteForm {
   }
 
   onSubmit(){
-    console.warn(this.clienteForm.value);
+    const formData = this.clienteForm.value;
+    this.clienteService.createCustomer(formData).subscribe(response => {
+      alert('Cliente cadastrado com sucesso!!!');
+    });
   }
 
   onClearForm(){
