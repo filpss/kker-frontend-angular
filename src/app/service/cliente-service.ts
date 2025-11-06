@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Cliente } from '../model/Cliente.entity';
 import { Observable } from 'rxjs';
+import { Cliente } from '../model/cliente.entity';
+
+
 
 @Injectable({
   providedIn: 'root',
@@ -11,8 +13,8 @@ export class ClienteService {
   private http = inject(HttpClient);
   private apiUrl: string = 'https://690a47e51a446bb9cc221939.mockapi.io';
 
-  public getCustomer(){
-    return this.http.get<Cliente>(`${this.apiUrl}/customer`);
+  public getCustomer(): Observable<Cliente[]>{
+    return this.http.get<Cliente[]>(`${this.apiUrl}/customer`);
   }
 
   public getActive(){
@@ -34,5 +36,6 @@ export class ClienteService {
   public deleteCustomer(){
     return this.http.delete(`${this.apiUrl}`);
   }
+  
 
 }
