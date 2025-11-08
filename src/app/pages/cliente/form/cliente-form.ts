@@ -45,7 +45,7 @@ export class ClienteForm implements OnInit{
   statusCliente = StatusCliente;
   statusClienteList = Object.values(this.statusCliente);
 
-  displayedColumns: string[] = ['nome', 'telefone', 'isAtivo', 'dataCobranca'];
+  displayedColumns: string[] = ['nome', 'telefone', 'isAtivo', 'dataCobranca', 'actions'];
   clienteList: Cliente[] = [];
   dataSource = new MatTableDataSource(this.clienteList);
 

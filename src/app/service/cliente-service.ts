@@ -36,6 +36,6 @@ export class ClienteService {
   public deleteCustomer(){
     return this.http.delete(`${this.apiUrl}`);
   }
-  
+
 
 }
