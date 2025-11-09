@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -17,8 +17,8 @@ import { StatusCliente } from '../../../shared/enums/StatusCliente';
 import { trimmedRequiredValidator } from '../../../shared/validators/trimmedRequiredValidator';
 import { ClienteService } from '../../../service/cliente-service';
 import { MatTableDataSource, MatTableModule} from '@angular/material/table';
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Cliente } from '../../../model/cliente.entity';
-import { RouterModule } from "@angular/router";
 
 
 @Component({
@@ -44,18 +44,21 @@ import { RouterModule } from "@angular/router";
 export class ClienteForm implements OnInit{
   statusCliente = StatusCliente;
   statusClienteList = Object.values(this.statusCliente);
+  cliente: Cliente | undefined;
 
-  displayedColumns: string[] = ['nome', 'telefone', 'isAtivo', 'dataCobranca', 'actions'];
+  displayedColumns: string[] = ['id', 'nome', 'telefone', 'isAtivo', 'dataCobranca', 'actions'];
   clienteList: Cliente[] = [];
   dataSource = new MatTableDataSource(this.clienteList);
+
+  @Input() inputCliente!: Cliente;
 
   private clienteService = inject(ClienteService);
   private formBuilder = inject(FormBuilder);
   private snackBar = inject(MatSnackBar);
 
-  constructor(){
-
-  }
+  constructor(private route: ActivatedRoute,
+              private router: Router
+  ){}
 
   clienteForm = this.formBuilder.group({
     nome: ['', [Validators.required, trimmedRequiredValidator]],
@@ -84,31 +87,80 @@ export class ClienteForm implements OnInit{
   }
 
   ngOnInit(): void{
-    this.clienteService.getCustomer().subscribe({
+
+    var clienteId = this.route.snapshot.params['id'];
+
+    if(clienteId){
+      this.onEdit(clienteId);
+    }
+
+    this.clienteService.getAllCustomer().subscribe({
       next: (response) => {
         this.clienteList = response;
         this.dataSource = new MatTableDataSource(this.clienteList);
-        console.log(this.clienteList);
       },
       error: (err) => {
         console.warn("Erro ao carregar clientes" + err);
       }
-    })
+    });
   }
 
   onSubmit(){
+    var clienteId = this.route.snapshot.params['id'];
+
     if(this.clienteForm.invalid) return;
     const formData = this.clienteForm.value;
 
-    this.clienteService.createCustomer(formData).subscribe({
+    if(clienteId){
+      this.clienteService.editCustomer(clienteId, formData).subscribe({
+        next: (response) => {
+          this.snackBar.open('Cliente atualizado com sucesso!!!', '', {
+            duration: 4000
+          });
+          this.router.navigate(['/clientes']);
+        },
+        error: (error) => {
+          alert('erro ao atualizar o cliente' + error);
+        }
+      });
+    } else {
+      this.clienteService.createCustomer(formData).subscribe({
+        next: (response) => {
+          this.snackBar.open('Cliente cadastrado com sucesso!!!', '' , {
+            duration: 4000
+          });
+          this.reloadPage();
+        },
+        error: (error) => {
+          alert('Erro ao realizar o cadastro do cliente' + error);
+        }
+      });
+    }
+  }
+
+  onEdit(id: any): void{
+    var formData = this.clienteForm.value;
+    this.clienteService.getCustomerById(id).subscribe({
       next: (response) => {
-        this.snackBar.open('Cliente cadastrado com sucesso!!!', '' , {
-          duration: 4000
-        });
-        this.onClearForm();
+        formData = response;
+        this.clienteForm.patchValue(formData);
       },
       error: (error) => {
-        alert('Erro ao realizar o cadastro do cliente' + error);
+        console.warn("Erro ao carregar o cliente", error);
+      }
+    });
+  }
+
+  onDelete(id: any){
+    this.clienteService.deleteCustomer(id).subscribe({
+      next: (response) => {
+        this.snackBar.open('Cliente excluido com sucesso!!!', '', {
+          duration: 4000
+        });
+        this.router.navigate(['/clientes']);
+      },
+      error: (error) => {
+        alert('Erro ao deletar o cliente' + error);
       }
     });
   }
@@ -120,6 +172,10 @@ export class ClienteForm implements OnInit{
   applyFilter(event: Event){
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  reloadPage(): void{
+    window.location.reload();
   }
 
 }
