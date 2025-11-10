@@ -3,7 +3,7 @@ import { StatusCliente } from "../shared/enums/StatusCliente";
 export interface Cliente {
   id: number;
   nome: string;
-  telefone: number;
+  telefone: string;
   isAtivo: StatusCliente;
-  dataCobranca: Date;
+  dataCobranca: string;
 }

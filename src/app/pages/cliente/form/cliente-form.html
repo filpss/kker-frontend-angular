@@ -1,7 +1,7 @@
 <mat-card appearance="outlined">
     <mat-card-header>
         <mat-card-title>
-          Cadastro de cliente
+          {{isEditMode ? 'Editar cliente' : 'Cadastrar cliente'}}
         </mat-card-title>
     </mat-card-header>
 
@@ -63,9 +63,9 @@
         </mat-grid-list>
 
         <mat-card-actions>
-          <button matButton>cancelar</button>
+          <button matButton type="button" [routerLink]="['/clientes']">cancelar</button>
           <button matButton type="button" (click)="onClearForm()">limpar</button>
-          <button matButton type="submit" [disabled]="!clienteForm.valid">confirmar</button>
+          <button matButton type="submit" [disabled]="!clienteForm.valid">{{isEditMode ? 'Atualizar' : 'Confirmar'}}</button>
         </mat-card-actions>
 
       </form>
@@ -78,6 +78,12 @@
 </mat-form-field>
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef>ID</th>
+    <td mat-cell *matCellDef="let cliente">{{cliente.id}}</td>
+  </ng-container>
+
   <ng-container matColumnDef="nome">
     <th mat-header-cell *matHeaderCellDef>Nome</th>
     <td mat-cell *matCellDef="let cliente"> {{cliente.nome}} </td>
@@ -85,7 +91,7 @@
 
   <ng-container matColumnDef="telefone">
     <th mat-header-cell *matHeaderCellDef>Telefone</th>
-    <td mat-cell *matCellDef="let cliente"> {{cliente.telefone}} </td>
+    <td mat-cell *matCellDef="let cliente"> {{cliente.telefone | phonePipe }} </td>
   </ng-container>
 
   <ng-container matColumnDef="isAtivo">
@@ -94,8 +100,20 @@
   </ng-container>
 
   <ng-container matColumnDef="dataCobranca">
-    <th mat-header-cell *matHeaderCellDef>Data de cobrança</th>
-    <td mat-cell *matCellDef="let cliente"> {{cliente.dataCobranca}}</td>
+    <th mat-header-cell *matHeaderCellDef >Data de cobrança</th>
+    <td mat-cell *matCellDef="let cliente"> {{cliente.dataCobranca | date: 'dd/MM/yyyy' }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Ações</th>
+    <td mat-cell *matCellDef="let row">
+      <button mat-stroked-button [routerLink]="['/clientes', row.id]" (click)="onEdit(row.id)">
+        Editar
+      </button>
+      <button mat-stroked-button [routerLink]="['/clientes', row.id]" (click)="onDelete(row.id)">
+        Excluir
+      </button>
+    </td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -105,5 +123,7 @@
     <td class="mat-cell" colspan="4">Nenhum dado correspondente ao filtro "{{input.value}}"</td>
   </tr>
 </table>
+
+
 
 
