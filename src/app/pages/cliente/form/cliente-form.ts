@@ -19,6 +19,7 @@ import { ClienteService } from '../../../service/cliente-service';
 import { MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { Cliente } from '../../../model/cliente.entity';
+import { PhonePipePipe } from '../../../shared/pipe/phone-pipe-pipe';
 
 
 @Component({
@@ -36,29 +37,36 @@ import { Cliente } from '../../../model/cliente.entity';
     MatSelectModule,
     NgxMaskDirective,
     MatSnackBarModule,
-    MatTableModule, RouterModule],
+    MatTableModule,
+    RouterModule,
+    PhonePipePipe
+  ],
   templateUrl: './cliente-form.html',
   styleUrl: './cliente-form.css',
 })
 
+
 export class ClienteForm implements OnInit{
+
+  private clienteService = inject(ClienteService);
+  private formBuilder = inject(FormBuilder);
+  private snackBar = inject(MatSnackBar);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+
+  @Input() inputCliente!: Cliente;
+
   statusCliente = StatusCliente;
   statusClienteList = Object.values(this.statusCliente);
   cliente: Cliente | undefined;
+  clienteId = this.route.snapshot.params['id'];
+  isEditMode: boolean = false;
 
   displayedColumns: string[] = ['id', 'nome', 'telefone', 'isAtivo', 'dataCobranca', 'actions'];
   clienteList: Cliente[] = [];
   dataSource = new MatTableDataSource(this.clienteList);
 
-  @Input() inputCliente!: Cliente;
-
-  private clienteService = inject(ClienteService);
-  private formBuilder = inject(FormBuilder);
-  private snackBar = inject(MatSnackBar);
-
-  constructor(private route: ActivatedRoute,
-              private router: Router
-  ){}
+  constructor(){}
 
   clienteForm = this.formBuilder.group({
     nome: ['', [Validators.required, trimmedRequiredValidator]],
@@ -88,31 +96,19 @@ export class ClienteForm implements OnInit{
 
   ngOnInit(): void{
 
-    var clienteId = this.route.snapshot.params['id'];
-
-    if(clienteId){
-      this.onEdit(clienteId);
+    if(this.clienteId){
+      this.onEdit(this.clienteId);
     }
 
-    this.clienteService.getAllCustomer().subscribe({
-      next: (response) => {
-        this.clienteList = response;
-        this.dataSource = new MatTableDataSource(this.clienteList);
-      },
-      error: (err) => {
-        console.warn("Erro ao carregar clientes" + err);
-      }
-    });
+    this.onLoadClientes();
   }
 
   onSubmit(){
-    var clienteId = this.route.snapshot.params['id'];
-
     if(this.clienteForm.invalid) return;
     const formData = this.clienteForm.value;
 
-    if(clienteId){
-      this.clienteService.editCustomer(clienteId, formData).subscribe({
+    if(this.clienteId){
+      this.clienteService.editCustomer(this.clienteId, formData).subscribe({
         next: (response) => {
           this.snackBar.open('Cliente atualizado com sucesso!!!', '', {
             duration: 4000
@@ -139,9 +135,10 @@ export class ClienteForm implements OnInit{
   }
 
   onEdit(id: any): void{
-    var formData = this.clienteForm.value;
+    let formData = this.clienteForm.value;
     this.clienteService.getCustomerById(id).subscribe({
       next: (response) => {
+        this.isEditMode = true;
         formData = response;
         this.clienteForm.patchValue(formData);
       },
@@ -161,6 +158,18 @@ export class ClienteForm implements OnInit{
       },
       error: (error) => {
         alert('Erro ao deletar o cliente' + error);
+      }
+    });
+  }
+
+  onLoadClientes(){
+    this.clienteService.getAllCustomer().subscribe({
+      next: (response) => {
+        this.clienteList = response;
+        this.dataSource = new MatTableDataSource(this.clienteList);
+      },
+      error: (err) => {
+        console.warn("Erro ao carregar clientes" + err);
       }
     });
   }
