@@ -18,8 +18,8 @@ import { trimmedRequiredValidator } from '../../../shared/validators/trimmedRequ
 import { ClienteService } from '../../../service/cliente-service';
 import { MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { Cliente } from '../../../model/cliente.entity';
 import { PhonePipePipe } from '../../../shared/pipe/phone-pipe-pipe';
+import { Cliente } from '../../../model/cliente.entity';
 
 
 @Component({
