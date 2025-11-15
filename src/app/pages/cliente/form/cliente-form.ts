@@ -1,3 +1,4 @@
+import { Cliente } from '../../../model/cliente-entity';
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -19,7 +20,6 @@ import { ClienteService } from '../../../service/cliente-service';
 import { MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { PhonePipePipe } from '../../../shared/pipe/phone-pipe-pipe';
-import { Cliente } from '../../../model/cliente.entity';
 
 
 @Component({
@@ -69,10 +69,14 @@ export class ClienteForm implements OnInit{
   constructor(){}
 
   clienteForm = this.formBuilder.group({
-    nome: ['', [Validators.required, trimmedRequiredValidator]],
+    nome: ['', [  Validators.required,
+                  trimmedRequiredValidator]],
     telefone: ['', [
                     Validators.required,
-                    Validators.minLength(11)]],
+                    Validators.minLength(11),
+                    trimmedRequiredValidator
+                  ]
+              ],
     isAtivo: [StatusCliente.ATIVO],
     dataCobranca: ['']
   });
@@ -105,10 +109,10 @@ export class ClienteForm implements OnInit{
 
   onSubmit(){
     if(this.clienteForm.invalid) return;
-    const formData = this.clienteForm.value;
+    let formData = this.clienteForm.value;
 
     if(this.clienteId){
-      this.clienteService.editCustomer(this.clienteId, formData).subscribe({
+      this.clienteService.editCliente(this.clienteId, formData).subscribe({
         next: (response) => {
           this.snackBar.open('Cliente atualizado com sucesso!!!', '', {
             duration: 4000
@@ -120,12 +124,12 @@ export class ClienteForm implements OnInit{
         }
       });
     } else {
-      this.clienteService.createCustomer(formData).subscribe({
+      this.clienteService.createCliente(formData).subscribe({
         next: (response) => {
           this.snackBar.open('Cliente cadastrado com sucesso!!!', '' , {
             duration: 4000
           });
-          this.reloadPage();
+          this.OnReloadPage();
         },
         error: (error) => {
           alert('Erro ao realizar o cadastro do cliente' + error);
@@ -135,12 +139,16 @@ export class ClienteForm implements OnInit{
   }
 
   onEdit(id: any): void{
-    let formData = this.clienteForm.value;
-    this.clienteService.getCustomerById(id).subscribe({
+
+    this.clienteService.getClienteById(id).subscribe({
       next: (response) => {
         this.isEditMode = true;
-        formData = response;
-        this.clienteForm.patchValue(formData);
+        this.clienteForm.patchValue({
+          nome: response.nome,
+          isAtivo: response.isAtivo,
+          telefone: response.telefone,
+          dataCobranca: response.dataCobranca.toString()
+        });
       },
       error: (error) => {
         console.warn("Erro ao carregar o cliente", error);
@@ -149,8 +157,8 @@ export class ClienteForm implements OnInit{
   }
 
   onDelete(id: any){
-    this.clienteService.deleteCustomer(id).subscribe({
-      next: (response) => {
+    this.clienteService.deleteCliente(id).subscribe({
+      next: () => {
         this.snackBar.open('Cliente excluido com sucesso!!!', '', {
           duration: 4000
         });
@@ -163,7 +171,7 @@ export class ClienteForm implements OnInit{
   }
 
   onLoadClientes(){
-    this.clienteService.getAllCustomer().subscribe({
+    this.clienteService.getAllCliente().subscribe({
       next: (response) => {
         this.clienteList = response;
         this.dataSource = new MatTableDataSource(this.clienteList);
@@ -183,7 +191,7 @@ export class ClienteForm implements OnInit{
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  reloadPage(): void{
+  OnReloadPage(): void{
     window.location.reload();
   }
 

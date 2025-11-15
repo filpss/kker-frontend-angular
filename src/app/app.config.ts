@@ -8,6 +8,7 @@ import { provideHttpClient } from '@angular/common/http';
 
 import ptLocale from '@angular/common/locales/pt';
 import { DATE_PIPE_DEFAULT_OPTIONS, registerLocaleData } from '@angular/common';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 registerLocaleData(ptLocale, 'pt-br');
 
@@ -31,6 +32,7 @@ export const appConfig: ApplicationConfig = {
       useValue: 'pt-br'
     },
     provideEnvironmentNgxMask(),
+    provideNativeDateAdapter(),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),

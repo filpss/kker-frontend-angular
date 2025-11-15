@@ -12,12 +12,9 @@
           <mat-grid-tile>
             <mat-form-field class="input-medio">
               <mat-label>Nome</mat-label>
-              <input matInput required="true" id="nome" formControlName="nome"/>
-              @if(nome?.hasError('required')){
+              <input matInput required="true" id="nome" formControlName="nome" maxlength="50"/>
+              @if(nome?.hasError('required') || nome?.hasError('pattern')){
                 <mat-error>O campo nome é obrigatório</mat-error>
-              }
-              @if(nome?.hasError('pattern')){
-                <mat-error>Espaço vazio</mat-error>
               }
             </mat-form-field>
           </mat-grid-tile>
@@ -120,7 +117,7 @@
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
   <tr class="mat-row" *matNoDataRow>
-    <td class="mat-cell" colspan="4">Nenhum dado correspondente ao filtro "{{input.value}}"</td>
+    <td class="mat-cell" colspan="4">Nenhum dado correspondente ao filtro</td>
   </tr>
 </table>
 
