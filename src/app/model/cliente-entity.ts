@@ -5,5 +5,5 @@ export interface Cliente {
   nome: string;
   telefone: string;
   isAtivo: StatusCliente;
-  dataCobranca: string;
+  dataCobranca: Date | string;
 }
