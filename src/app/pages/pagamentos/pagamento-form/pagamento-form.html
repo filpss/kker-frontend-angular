@@ -1,0 +1,206 @@
+<div class="pagamentos-container">
+  <mat-card class="section-card form-card">
+    <mat-card-header>
+      <div class="card-header-content">
+        <div class="header-icon">
+          <mat-icon>{{ isEditMode ? 'edit' : 'account_balance_wallet' }}</mat-icon>
+        </div>
+        <mat-card-title>
+          {{ isEditMode ? 'Editar Pagamento' : 'Registrar Novo Pagamento' }}
+        </mat-card-title>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="pagamentoForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Cliente</mat-label>
+            <mat-select required formControlName="cliente" (selectionChange)="onClienteChange($event)">
+              @for (cliente of clientes; track cliente) {
+                <mat-option [value]="cliente.id">{{ cliente.nome }}</mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>person</mat-icon>
+            @if (pagamentoForm.get('cliente')?.hasError('required') && pagamentoForm.get('cliente')?.touched) {
+              <mat-error>Selecione um cliente</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Venda</mat-label>
+            <mat-select required formControlName="venda" [disabled]="!clienteSelecionado">
+              @for (venda of vendasFiltradas; track venda) {
+                <mat-option [value]="venda.id">{{ venda.descricao }} - {{ venda.valor | currency: 'BRL' }}</mat-option>
+              }
+            </mat-select>
+            <mat-icon matPrefix>shopping_cart</mat-icon>
+            @if (!clienteSelecionado) {
+              <mat-hint>Selecione um cliente primeiro</mat-hint>
+            }
+            @if (pagamentoForm.get('venda')?.hasError('required') && pagamentoForm.get('venda')?.touched) {
+              <mat-error>Selecione uma venda</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Valor do Pagamento</mat-label>
+            <input
+              matInput
+              required
+              formControlName="valor"
+              currencyMask
+              maxlength="15"
+              [options]="{prefix: 'R$ ', thousands: '.', decimal: ','}"
+              placeholder="R$ 0,00"
+            />
+            <mat-icon matPrefix>attach_money</mat-icon>
+            @if (pagamentoForm.get('valor')?.hasError('required') && pagamentoForm.get('valor')?.touched) {
+              <mat-error>Informe o valor do pagamento</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Data do Pagamento</mat-label>
+            <input matInput [matDatepicker]="picker" required formControlName="dataPagamento" readonly placeholder="Selecione a data"/>
+            <mat-icon matPrefix>event</mat-icon>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            @if (pagamentoForm.get('dataPagamento')?.hasError('required') && pagamentoForm.get('dataPagamento')?.touched) {
+              <mat-error>Informe a data do pagamento</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field form-field-full">
+            <mat-label>Descrição</mat-label>
+            <textarea matInput required formControlName="descricao" maxlength="150" rows="2" placeholder="Descreva o pagamento"></textarea>
+            <mat-icon matPrefix>description</mat-icon>
+            @if (pagamentoForm.get('descricao')?.hasError('required') && pagamentoForm.get('descricao')?.touched) {
+              <mat-error>Informe a descrição do pagamento</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" [routerLink]="['/pagamentos']" class="btn-cancel">
+            <mat-icon>close</mat-icon>
+            Cancelar
+          </button>
+          <button mat-stroked-button type="button" (click)="onClearForm()" class="btn-clear">
+            <mat-icon>refresh</mat-icon>
+            Limpar
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!pagamentoForm.valid" class="btn-submit">
+            <mat-icon>{{ isEditMode ? 'save' : 'check' }}</mat-icon>
+            {{ isEditMode ? 'Atualizar' : 'Confirmar' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="section-card table-card">
+    <mat-card-header>
+      <div class="card-header-content">
+        <div class="header-icon">
+          <mat-icon>payments</mat-icon>
+        </div>
+        <mat-card-title>Lista de Pagamentos</mat-card-title>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="table-toolbar">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Buscar pagamento</mat-label>
+          <input matInput (keyup)="applyFilter($event)" #input placeholder="Digite para filtrar..."/>
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="table-container">
+        <table mat-table [dataSource]="dataSource" class="pagamentos-table">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let pagamento">
+              <span class="id-badge">{{ pagamento.id }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="cliente">
+            <th mat-header-cell *matHeaderCellDef>Cliente</th>
+            <td mat-cell *matCellDef="let pagamento">
+              <div class="cell-with-icon">
+                <mat-icon class="cell-icon">person</mat-icon>
+                {{ pagamento.cliente }}
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="venda">
+            <th mat-header-cell *matHeaderCellDef>Venda</th>
+            <td mat-cell *matCellDef="let pagamento">
+              <div class="cell-with-icon">
+                <mat-icon class="cell-icon">shopping_cart</mat-icon>
+                {{ pagamento.venda }}
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="valor">
+            <th mat-header-cell *matHeaderCellDef>Valor</th>
+            <td mat-cell *matCellDef="let pagamento">
+              <span class="valor-badge">{{ pagamento.valor | currency: 'BRL' }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="descricao">
+            <th mat-header-cell *matHeaderCellDef>Descrição</th>
+            <td mat-cell *matCellDef="let pagamento">
+              <div class="cell-with-icon">
+                <mat-icon class="cell-icon">description</mat-icon>
+                {{ pagamento.descricao }}
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="dataPagamento">
+            <th mat-header-cell *matHeaderCellDef>Data do Pagamento</th>
+            <td mat-cell *matCellDef="let pagamento">
+              <div class="cell-with-icon">
+                <mat-icon class="cell-icon">event</mat-icon>
+                {{ pagamento.dataPagamento | date: 'dd/MM/yyyy' }}
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Ações</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="action-buttons">
+                <button mat-icon-button color="primary" [routerLink]="['/pagamentos', row.id]" (click)="onEdit(row.id)" matTooltip="Editar pagamento">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="onDelete(row.id)" matTooltip="Excluir pagamento">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data-cell" colspan="7">
+              <div class="empty-state">
+                <mat-icon>search_off</mat-icon>
+                <p>Nenhum pagamento encontrado</p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
