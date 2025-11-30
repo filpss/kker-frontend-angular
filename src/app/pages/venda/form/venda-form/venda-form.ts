@@ -16,6 +16,7 @@ import { Cliente } from '../../../../model/cliente-entity';
 import { Venda } from '../../../../model/venda-entity';
 import { ClienteService } from '../../../../service/cliente-service';
 import { VendaService } from '../../../../service/venda-service';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @Component({
@@ -31,7 +32,8 @@ import { VendaService } from '../../../../service/venda-service';
     ReactiveFormsModule,
     MatButtonModule,
     MatTableModule,
-    CurrencyMaskModule
+    CurrencyMaskModule,
+    MatIconModule
 ],
   templateUrl: './venda-form.html',
   styleUrl: './venda-form.css'

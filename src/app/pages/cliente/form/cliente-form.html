@@ -1,126 +1,174 @@
-<mat-card appearance="outlined">
+<div class="clientes-container">
+  <mat-card class="section-card form-card">
     <mat-card-header>
+      <div class="card-header-content">
+        <div class="header-icon">
+          <mat-icon>{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
+        </div>
         <mat-card-title>
-          {{isEditMode ? 'Editar cliente' : 'Cadastrar cliente'}}
+          {{ isEditMode ? 'Editar Cliente' : 'Cadastrar Novo Cliente' }}
         </mat-card-title>
+      </div>
     </mat-card-header>
 
     <mat-card-content>
       <form [formGroup]="clienteForm" (ngSubmit)="onSubmit()">
-        <mat-grid-list cols="4" rowHeight="100px" gutterSize="8px">
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Nome</mat-label>
+            <input matInput required="true" id="nome" formControlName="nome" maxlength="50" placeholder="Digite o nome do cliente"/>
+            <mat-icon matPrefix>person</mat-icon>
+            @if(nome?.hasError('required') || nome?.hasError('pattern')){
+              <mat-error>O campo nome é obrigatório</mat-error>
+            }
+          </mat-form-field>
 
-          <mat-grid-tile>
-            <mat-form-field class="input-medio">
-              <mat-label>Nome</mat-label>
-              <input matInput required="true" id="nome" formControlName="nome" maxlength="50"/>
-              @if(nome?.hasError('required') || nome?.hasError('pattern')){
-                <mat-error>O campo nome é obrigatório</mat-error>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Status</mat-label>
+            <mat-select id="isAtivo" formControlName="isAtivo">
+              @for (statusCliente of statusClienteList; track statusCliente) {
+                <mat-option [value]="statusCliente">{{ statusCliente }}</mat-option>
               }
-            </mat-form-field>
-          </mat-grid-tile>
+            </mat-select>
+            <mat-icon matPrefix>toggle_on</mat-icon>
+          </mat-form-field>
 
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Telefone</mat-label>
+            <input matInput required="true" id="telefone" formControlName="telefone" mask="(00) 00000-0000" placeholder="(00) 00000-0000"/>
+            <mat-icon matPrefix>phone</mat-icon>
+            @if(telefone?.hasError('required') && telefone?.touched){
+              <mat-error>O campo telefone é obrigatório</mat-error>
+            } @else if(telefone?.hasError("minlength")) {
+              <mat-error>Insira um número de telefone válido</mat-error>
+            }
+          </mat-form-field>
 
-          <mat-grid-tile>
-            <mat-form-field class="input-medio">
-              <mat-label>Ativo</mat-label>
-              <mat-select id="isAtivo" formControlName="isAtivo">
-                @for (statusCliente of statusClienteList; track statusCliente) {
-                  <mat-option [value]="statusCliente">{{statusCliente}}</mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
-          </mat-grid-tile>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Data de Cobrança</mat-label>
+            <input matInput [matDatepicker]="picker" required="true" id="dataCobranca" formControlName="dataCobranca" readonly placeholder="Selecione a data"/>
+            <mat-icon matPrefix>event</mat-icon>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            @if(dataCobranca?.invalid){
+              <mat-error>O campo data de cobrança é obrigatório</mat-error>
+            }
+          </mat-form-field>
+        </div>
 
-          <mat-grid-tile>
-            <mat-form-field class="input-medio">
-              <mat-label>Telefone</mat-label>
-              <mat-icon matSuffix>phone</mat-icon>
-              <input matInput required="true" id="telefone" formControlName="telefone" mask="(00) 00000-0000"/>
-              @if(telefone?.hasError('required') && telefone?.touched){
-                <mat-error>O campo telefone é obrigatório</mat-error>
-              } @if(telefone?.hasError("minlength")) {
-                <mat-error>Insira um número de telefone válido</mat-error>
-              }
-
-            </mat-form-field>
-          </mat-grid-tile>
-
-          <mat-grid-tile>
-            <mat-form-field class="input-medio">
-              <mat-label>Data de cobrança</mat-label>
-              <input matInput [matDatepicker]="picker" required="true" id="dataCobranca" formControlName="dataCobranca" readonly/>
-              @if(dataCobranca?.invalid){
-                <mat-error>O campo data de cobrança é obrigatório</mat-error>
-              }
-              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
-          </mat-grid-tile>
-
-        </mat-grid-list>
-
-        <mat-card-actions>
-          <button matButton type="button" [routerLink]="['/clientes']">cancelar</button>
-          <button matButton type="button" (click)="onClearForm()">limpar</button>
-          <button matButton type="submit" [disabled]="!clienteForm.valid">{{isEditMode ? 'Atualizar' : 'Confirmar'}}</button>
-        </mat-card-actions>
-
+        <div class="form-actions">
+          <button mat-stroked-button type="button" [routerLink]="['/clientes']" class="btn-cancel">
+            <mat-icon>close</mat-icon>
+            Cancelar
+          </button>
+          <button mat-stroked-button type="button" (click)="onClearForm()" class="btn-clear">
+            <mat-icon>refresh</mat-icon>
+            Limpar
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!clienteForm.valid" class="btn-submit">
+            <mat-icon>{{ isEditMode ? 'save' : 'check' }}</mat-icon>
+            {{ isEditMode ? 'Atualizar' : 'Confirmar' }}
+          </button>
+        </div>
       </form>
     </mat-card-content>
-</mat-card>
+  </mat-card>
 
-<mat-form-field class="input-filtragem">
-  <mat-label>Filtrar</mat-label>
-  <input matInput (keyup)="applyFilter($event)" #input>
-</mat-form-field>
+  <mat-card class="section-card table-card">
+    <mat-card-header>
+      <div class="card-header-content">
+        <div class="header-icon">
+          <mat-icon>groups</mat-icon>
+        </div>
+        <mat-card-title>Lista de Clientes</mat-card-title>
+      </div>
+    </mat-card-header>
 
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <mat-card-content>
+      <div class="table-toolbar">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Buscar cliente</mat-label>
+          <input matInput (keyup)="applyFilter($event)" #input placeholder="Digite para filtrar..."/>
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+      </div>
 
-  <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef>ID</th>
-    <td mat-cell *matCellDef="let cliente">{{cliente.id}}</td>
-  </ng-container>
+      <div class="table-container">
+        <table mat-table [dataSource]="dataSource" class="clientes-table">
 
-  <ng-container matColumnDef="nome">
-    <th mat-header-cell *matHeaderCellDef>Nome</th>
-    <td mat-cell *matCellDef="let cliente"> {{cliente.nome}} </td>
-  </ng-container>
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let cliente">
+              <span class="id-badge">{{ cliente.id }}</span>
+            </td>
+          </ng-container>
 
-  <ng-container matColumnDef="telefone">
-    <th mat-header-cell *matHeaderCellDef>Telefone</th>
-    <td mat-cell *matCellDef="let cliente"> {{cliente.telefone | phonePipe }} </td>
-  </ng-container>
+          <ng-container matColumnDef="nome">
+            <th mat-header-cell *matHeaderCellDef>Nome</th>
+            <td mat-cell *matCellDef="let cliente">
+              <div class="cliente-nome">
+                <mat-icon class="nome-icon">person</mat-icon>
+                {{ cliente.nome }}
+              </div>
+            </td>
+          </ng-container>
 
-  <ng-container matColumnDef="isAtivo">
-    <th mat-header-cell *matHeaderCellDef>Ativo?</th>
-    <td mat-cell *matCellDef="let cliente"> {{cliente.isAtivo}} </td>
-  </ng-container>
+          <ng-container matColumnDef="telefone">
+            <th mat-header-cell *matHeaderCellDef>Telefone</th>
+            <td mat-cell *matCellDef="let cliente">
+              <div class="cliente-telefone">
+                <mat-icon class="telefone-icon">phone</mat-icon>
+                {{ cliente.telefone | phonePipe }}
+              </div>
+            </td>
+          </ng-container>
 
-  <ng-container matColumnDef="dataCobranca">
-    <th mat-header-cell *matHeaderCellDef >Data de cobrança</th>
-    <td mat-cell *matCellDef="let cliente"> {{cliente.dataCobranca | date: 'dd/MM/yyyy' }}</td>
-  </ng-container>
+          <ng-container matColumnDef="isAtivo">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let cliente">
+              <span class="status-badge" [class.ativo]="cliente.isAtivo === 'Sim'" [class.inativo]="cliente.isAtivo === 'Não'">
+                {{ cliente.isAtivo }}
+              </span>
+            </td>
+          </ng-container>
 
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef>Ações</th>
-    <td mat-cell *matCellDef="let row">
-      <button mat-stroked-button [routerLink]="['/clientes', row.id]" (click)="onEdit(row.id)">
-        Editar
-      </button>
-      <button mat-stroked-button [routerLink]="['/clientes', row.id]" (click)="onDelete(row.id)">
-        Excluir
-      </button>
-    </td>
-  </ng-container>
+          <ng-container matColumnDef="dataCobranca">
+            <th mat-header-cell *matHeaderCellDef>Data de Cobrança</th>
+            <td mat-cell *matCellDef="let cliente">
+              <div class="cliente-data">
+                <mat-icon class="data-icon">event</mat-icon>
+                {{ cliente.dataCobranca | date: 'dd/MM/yyyy' }}
+              </div>
+            </td>
+          </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Ações</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="action-buttons">
+                <button mat-icon-button color="primary" [routerLink]="['/clientes', row.id]" (click)="onEdit(row.id)" matTooltip="Editar cliente">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="onDelete(row.id)" matTooltip="Excluir cliente">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
 
-  <tr class="mat-row" *matNoDataRow>
-    <td class="mat-cell" colspan="4">Nenhum dado correspondente ao filtro</td>
-  </tr>
-</table>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-
-
-
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data-cell" colspan="6">
+              <div class="empty-state">
+                <mat-icon>search_off</mat-icon>
+                <p>Nenhum cliente encontrado</p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
